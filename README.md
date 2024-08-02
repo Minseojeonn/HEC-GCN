@@ -1,1 +1,1 @@
-# ECSR code for paper
+# HEC-GCN code for paper
