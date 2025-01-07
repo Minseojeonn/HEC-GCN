@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @File  : model.py
-# @Author:
-# @Date  : 2021/11/1 16:16
-# @Desc  :
 import os.path
 from math import sqrt
 
@@ -35,7 +29,6 @@ class GraphEncoder(nn.Module):
         result = [x]
         for i in range(len(self.gnn_layers)):
             x = self.gnn_layers[i](x=x, edge_index=edge_index)
-            # x = self.dropout(x)
             x = F.normalize(x, dim=-1)
             result.append(x / (i + 1))
         result = torch.stack(result, dim=0)
@@ -47,14 +40,11 @@ class Mutual_Attention(nn.Module):
 
     def __init__(self, input_dim, dim_qk, dim_v):
         super(Mutual_Attention, self).__init__()
-
         self._norm_fact = 1 / sqrt(dim_qk)
 
     def forward(self, q_token, k_token, v_token):
-
         att = nn.Softmax(dim=-1)(torch.matmul(q_token, k_token.transpose(-1, -2)) * self._norm_fact)
         att = torch.matmul(att, v_token)
-
         return att
 
 
@@ -98,8 +88,6 @@ class Hyper_behavior_gcn(nn.Module):
 
         for i in range(self.layer_nums):
             user_embedding, item_embedding = torch.split(lats[-1], [self.n_users + 1, self.n_items + 1])
-            # hyperULat = self.hgnnLayer(F.dropout(uuHyper, p=1 - self.keepRate), user_embedding)
-            # hyperILat = self.hgnnLayer(F.dropout(iiHyper, p=1 - self.keepRate), item_embedding)
             hyperULat = self.hgnnLayer(self.dropout1(uuHyper), user_embedding)
             hyperILat = self.hgnnLayer(self.dropout2(iiHyper), item_embedding)
             hyper_all = torch.cat([hyperULat, hyperILat], dim=0)
@@ -157,12 +145,11 @@ class HEC_GCN(nn.Module):
 
         self.global_graph_encoder = GraphEncoder(self.layers, self.embedding_size, self.node_dropout)
         self.W = nn.Parameter(torch.ones(len(self.behaviors)))
-        ## add: hpyer graph  >>
+        
         self.behavior_normlize_adj = dataset.behavior_normlize_adj
         self.behavior_hyper_graph_encoder = nn.ModuleDict({behavior: Hyper_behavior_gcn(args=args, n_users=self.n_users, n_items=self.n_items, layer_nums=1) for idx, behavior in enumerate(self.behaviors)})
 
 
-        ## <<
         self.dim_qk = args.dim_qk
         self.dim_v = args.dim_v
         self.attention_user = Mutual_Attention(self.embedding_size, self.dim_qk, self.dim_v)
@@ -258,13 +245,11 @@ class HEC_GCN(nn.Module):
             user_global_embeddings, item_global_embeddings = torch.split(all_embeddings, [self.n_users + 1, self.n_items + 1])
             tau = self.args.tau
             cl_user_loss = (
-                # 0+0
                   self.cl_coefficient[0] * contrastive_loss(user_behavior_embeddings[torch.unique(users)], user_hyper_behavior_embeddings[torch.unique(users)], temp=tau)  ## A
                 + self.cl_coefficient[1] * contrastive_loss(user_behavior_embeddings[torch.unique(users)], user_global_embeddings[torch.unique(users)], temp=tau)  ## B
                 + self.cl_coefficient[2] * contrastive_loss(user_hyper_behavior_embeddings[torch.unique(users)], user_global_embeddings[torch.unique(users)], temp=tau)  ## C
             )
             cl_item_loss = (
-                # 0+0
                   self.cl_coefficient[0] * contrastive_loss(item_behavior_embeddings[torch.unique(items)], item_hyper_behavior_embeddings[torch.unique(items)], temp=tau)  ## A
                 + self.cl_coefficient[1] * contrastive_loss(item_behavior_embeddings[torch.unique(items)], item_global_embeddings[torch.unique(items)], temp=tau)  ## B
                 + self.cl_coefficient[2] * contrastive_loss(item_hyper_behavior_embeddings[torch.unique(items)], item_global_embeddings[torch.unique(items)], temp=tau) ## C
