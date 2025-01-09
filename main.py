@@ -12,7 +12,7 @@ import time
 import numpy as np
 import torch
 from loguru import logger
-
+import ast
 from data_set import DataSet
 from model import HEC_GCN
 
@@ -57,13 +57,16 @@ if __name__ == '__main__':
     
     ##added params
     parser.add_argument('--layers_nums', type=list, default=[2, 2, 2], help='Each layer can have a value between 1 and 3')
-    parser.add_argument('--cl_coefficient', type=list, default=[1, 1, 1], help='The sum is 3, and each can have a value from 0 to 2.5 in increments of 0.5.) #lambda
-    parser.add_argument('--loss_coefficient', type=list, default=[1, 1, 1], help='equal') #in paper 
+    parser.add_argument('--cl_coefficient', type=str, default="[0.5, 2, 0.5]", help='The sum is 3, and each can have a value from 0 to 2.5 in increments of 0.5.')  #lambda
+    parser.add_argument('--loss_coefficient', type=str, default="[1, 1, 1]", help='equal') #in paper 
     parser.add_argument('--hyper_dropout', type=float, default=0.1, help='') #not used parameter in codes.
     parser.add_argument('--hyper_nums', type=float, default=32, help='') #in the paper 32 is best
     parser.add_argument('--tau', type=float, default=0.1, help='') #in the paper 0.1 is best
     parser.add_argument('--alpha', type=float, default=0.3, help='0.1 ~ 0.5') #
     args = parser.parse_args()
+    args.cl_coefficient = ast.literal_eval(args.cl_coefficient)
+    args.loss_coefficient = ast.literal_eval(args.loss_coefficient)
+
     
     seed = args.seed
     np.random.seed(seed)
