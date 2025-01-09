@@ -56,13 +56,13 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=2021, help='')
     
     ##added params
-    parser.add_argument('--layers_nums', type=list, default=[2, 2, 2], help='')
-    parser.add_argument('--cl_coefficient', type=list, default=[0.001, 0.001, 0.001], help='')#lambda
-    parser.add_argument('--loss_coefficient', type=list, default=[0.01, 0.01, 0.01], help='')
-    parser.add_argument('--hyper_dropout', type=float, default=0.1, help='')
-    parser.add_argument('--hyper_nums', type=float, default=32, help='')
-    parser.add_argument('--tau', type=float, default=0.1, help='')
-    parser.add_argument('--alpha', type=float, default=0.3, help='')
+    parser.add_argument('--layers_nums', type=list, default=[2, 2, 2], help='Each layer can have a value between 1 and 3')
+    parser.add_argument('--cl_coefficient', type=list, default=[1, 1, 1], help='The sum is 3, and each can have a value from 0 to 2.5 in increments of 0.5.) #lambda
+    parser.add_argument('--loss_coefficient', type=list, default=[1, 1, 1], help='equal') #in paper 
+    parser.add_argument('--hyper_dropout', type=float, default=0.1, help='') #not used parameter in codes.
+    parser.add_argument('--hyper_nums', type=float, default=32, help='') #in the paper 32 is best
+    parser.add_argument('--tau', type=float, default=0.1, help='') #in the paper 0.1 is best
+    parser.add_argument('--alpha', type=float, default=0.3, help='0.1 ~ 0.5') #
     args = parser.parse_args()
     
     seed = args.seed

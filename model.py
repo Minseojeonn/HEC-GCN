@@ -71,7 +71,7 @@ class Hyper_behavior_gcn(nn.Module):
         self.args = args
         self.leaky = 0.5
         self.layer_nums = layer_nums
-        self.keepRate = 1 - args.hyper_dropout
+        #self.keepRate = 1 - args.hyper_dropout
         self.act = nn.LeakyReLU(negative_slope=self.leaky)
         latdim = args.embedding_size
         hyperNum = args.hyper_nums
