@@ -56,7 +56,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=2021, help='')
     
     ##added params
-    parser.add_argument('--layers_nums', type=list, default=[2, 2, 2], help='Each layer can have a value between 1 and 3')
+    parser.add_argument('--layers_nums', type=str, default="[2, 2, 2]", help='Each layer can have a value between 1 and 3')
     parser.add_argument('--cl_coefficient', type=str, default="[0.5, 2, 0.5]", help='The sum is 3, and each can have a value from 0 to 2.5 in increments of 0.5.')  #lambda
     parser.add_argument('--loss_coefficient', type=str, default="[1, 1, 1]", help='equal') #in paper 
     parser.add_argument('--hyper_dropout', type=float, default=0.1, help='') #not used parameter in codes.
@@ -66,6 +66,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     args.cl_coefficient = ast.literal_eval(args.cl_coefficient)
     args.loss_coefficient = ast.literal_eval(args.loss_coefficient)
+    args.layers_nums = ast.literal_eval(args.layers_nums)
 
     
     seed = args.seed
